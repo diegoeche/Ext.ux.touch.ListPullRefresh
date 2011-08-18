@@ -1,24 +1,3 @@
-Ext.apply(Ext.anims, {
-    rotate: new Ext.Anim({
-        autoClear: false,
-        out: false,
-        before: function(el) {
-            var d = '';
-            if (this.dir == 'ccw'){
-              d = '-';
-            }
-
-            this.from = {
-                '-webkit-transform': 'rotate('+d+''+this.fromAngle+'deg)'
-            };
-
-            this.to = {
-                '-webkit-transform': 'rotate('+d+''+this.toAngle+'deg)'
-            };
-                        
-        }
-    })
-});  
 
 Ext.ns('Ext.ux.touch');
 /**
@@ -51,13 +30,10 @@ Ext.ux.touch.ListPullRefresh = Ext.extend(Ext.util.Observable, {
   },
   langPullRefresh: 'Pull down to refresh...',
   langReleaseRefresh: 'Release to refresh...',
-  langLoading: 'Loading...',
-  loading: false,
   // private
   init: function(cmp){
     this.cmp = cmp;
     this.lastUpdate = new Date();
-    cmp.loadingText = undefined;
     cmp.on('render', this.initPullHandler, this);
   },
   // private
@@ -77,7 +53,7 @@ Ext.ux.touch.ListPullRefresh = Ext.extend(Ext.util.Observable, {
   },
   //private
   handlePull: function(scroller, offset){
-    if (scroller.direction === 'vertical' && !this.loading){
+    if (scroller.direction === 'vertical'){
       if (offset.y > 0){
         Ext.Element.cssTranslate(this.pullEl, {x:0, y:offset.y-75});
         if (offset.y > 75){
@@ -86,7 +62,6 @@ Ext.ux.touch.ListPullRefresh = Ext.extend(Ext.util.Observable, {
             this.prevState = this.state;
             this.state = 1;
             this.pullTpl.overwrite(this.pullEl, {h:offset.y,m:this.langReleaseRefresh,l:this.lastUpdate});
-            Ext.Anim.run(this.pullEl.select('.arrow').first(),'rotate',{dir:'ccw',fromAngle:0,toAngle:180});
           }
         }else if (!scroller.isDragging()){
           // state 3
@@ -94,7 +69,6 @@ Ext.ux.touch.ListPullRefresh = Ext.extend(Ext.util.Observable, {
             this.prevState = this.state;
             this.state = 3;
             if (this.prevState == 1){
-              this.loading = true;
               this.lastUpdate = new Date();
               this.pullEl.hide();
               this.fireEvent('released',this,this.cmp);
@@ -107,9 +81,6 @@ Ext.ux.touch.ListPullRefresh = Ext.extend(Ext.util.Observable, {
             this.state = 2;
             this.pullTpl.overwrite(this.pullEl, {h:offset.y,m:this.langPullRefresh,l:this.lastUpdate});
             this.pullEl.show();
-            if (this.prevState == 1){
-              Ext.Anim.run(this.pullEl.select('.arrow').first(),'rotate',{dir:'cw',fromAngle:180,toAngle:0});
-            }
           }
         }
       }
@@ -117,7 +88,6 @@ Ext.ux.touch.ListPullRefresh = Ext.extend(Ext.util.Observable, {
   },
   //private
   processComplete: function(){
-    this.loading = false;
     this.lastUpdate = new Date();
     this.pullTpl.overwrite(this.pullEl, {h:0,m:this.langPullRefresh,l:this.lastUpdate});
   }

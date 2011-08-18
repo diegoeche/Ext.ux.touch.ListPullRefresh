@@ -1,3 +1,8 @@
+The fork simply removes some unnecessary stuff to just get it working
+with Sencha touch panels.
+
+The previous version worked only once when inserted in the panel.
+
 == Ext.ux.touch.ListPullRefresh
 
 This is a plugin based on enormego's EGOTableViewPullRefresh implementation which works with Sencha Touch.
